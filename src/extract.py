@@ -1,27 +1,52 @@
-import requests
-import json
+import json 
+from datetime import datetime, timezone
 from pathlib import Path
 
-# --- UHN Jobs API --- 
+import requests
+
+# --- API + output config --- 
 
 UHN_URL = "https://forms.uhn.ca/UHNCareers/Home/GetAll?tcnt=201" 
+RAW_DIR = Path("data/raw")
+LATEST_OUTPUT = RAW_DIR / "uhn_jobs.json"
+REQUEST_TIMEOUT_SECONDS = 30
 
-print("Fetching UHN job postings")
-response = requests.get(UHN_URL)
+# --- Fetch data from UHN API ---
 
-if response.status_code != 200:
-    print("ERROR:", response.status_code)
-    exit()
+def fetch_jobs(): 
+    print(f"Fetching UHN job postings from {UHN_URL}...") 
+    response = requests.get(UHN_URL, timeout = REQUEST_TIMEOUT_SECONDS)
+    response.raise_for_status()
 
-data = response.json()
-jobs = data['data']
-print(f"Jobs found: {len(jobs)}")
+    payload = response.json()
+    jobs = payload.get("data", [])
 
-# Save raw data
-output_path = Path("data/raw/uhn_jobs.json")
-output_path.parent.mkdir(parents = True, exist_ok = True)
+    # Guardrail: fail clearly if API response shape change
+    if not isinstance(jobs, list):
+        raise ValueError("Expected API response key 'data' to be a list")
 
-with open(output_path, "w") as f:
-    json.dump(jobs, f, indent = 2)
+    return jobs
 
-print("Saved to data/raw/uhn_jobs.json")
+# --- Save raw data (latest + timestaped snapshot) --- 
+
+def save_raw_jobs(jobs):
+    RAW_DIR.mkdir(parents = True, exist_ok = True)  
+
+    run_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    snapshot_output = RAW_DIR / f"uhn_jobs_{run_stamp}.json"
+
+    with open(LATEST_OUTPUT, "w") as f:
+        json.dump(jobs, f, indent=2)
+
+    with open(snapshot_output, "w") as f:
+        json.dump(jobs, f, indent=2)
+
+    print(f"Saved latest raw data to {LATEST_OUTPUT}")
+    print(f"Saved snapshot raw data to {snapshot_output}")
+
+# --- Script entrypoint --- 
+
+if __name__ == "__main__":
+    jobs = fetch_jobs()
+    print(f"Jobs found: {len(jobs)}")
+    save_raw_jobs(jobs)
