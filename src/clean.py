@@ -51,7 +51,7 @@ def is_gta_hospital(job):
     return not any(city in site for city in excluded_sites)
 
 # --- Clean and filter --- 
-cleand = []
+cleaned = []
 
 for job in jobs:
     # Basic data quality checks
@@ -69,12 +69,12 @@ for job in jobs:
         "id": job["id"],
         "title": job["name"],
         "site": job["site"],
-        "employment": job["employment"],
-        "department": job["department"] if job["department"] else "Not Specified",
-        "ref_number": job["refNumber"]
+        "employment": job["employment"] if job.get("employment") else "Not Specified",
+        "department": job["deparment"] if job.get("department") else "Not Specified",
+        "ref_number": job["refNumber"] if job.get("refNumber") else "Not Specified"
     })
 
-print(f"Cleaned jobs: {len(cleaned)}")
+print(f"Cleaned Jobs: {len(cleaned)}") 
 
 # Save clean data
 cleaned_path.parent.mkdir(parents = True, exist_ok = True)
