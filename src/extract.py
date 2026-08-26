@@ -4,6 +4,23 @@ from pathlib import Path
 
 import requests
 
+"""
+Extracts UHN job postings from the careers API.
+
+Basically:
+- call the UHN jobs endpoint
+- check for a successful HTTP response
+- parse the JSON payload
+- pull the 'data' list of job postings
+- save raw postings to data/raw/uhn_jobs.json
+
+Why this matters:
+- raw API output is preserved before cleaning
+- we keep an unmodified snapshot for debugging and traceability
+"""
+
+
+
 # --- API + output config --- 
 
 UHN_URL = "https://forms.uhn.ca/UHNCareers/Home/GetAll?tcnt=201" 

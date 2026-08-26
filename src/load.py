@@ -1,6 +1,23 @@
 import json 
 import psycopg2
 
+"""
+Loads cleaned job postings into PostgreSQL.
+
+Basically:
+- connect to nurse_job_postings
+- read cleaned JSON
+- insert each posting into job_postings
+- ignore duplicates using ON CONFLICT (id) DO NOTHING
+- commit changes and close the DB connection
+
+Why this matters:
+- keeps data in a queryable database
+- prevents duplicate records on repeated runs
+"""
+
+
+
 # Connect to psql
 conn = psycopg2.connect(
     dbname = "nurse_job_postings",

@@ -1,6 +1,20 @@
 import json 
 from pathlib import Path
 
+"""
+Cleans the raw UHN job data.
+
+Basically:
+- load raw JSON from data/raw/uhn_jobs.json
+- keep only nursing-related roles
+- keep only GTA hospitals
+- normalize missing values
+- write cleaned jobs to data/cleaned/uhn_jobs.json
+
+Why this matters:
+- reduces the dataset to relevant jobs before loading to Postgres
+- avoids storing noisy or irrelevant postings
+"""
 
 # Load raw data
 raw_path = Path("data/raw/uhn_jobs.json")
