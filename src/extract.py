@@ -32,7 +32,7 @@ def fetch_jobs():
 def save_raw_jobs(jobs):
     RAW_DIR.mkdir(parents = True, exist_ok = True)  
 
-    run_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") # Unique timestamp string creation
     snapshot_output = RAW_DIR / f"uhn_jobs_{run_stamp}.json"
 
     with open(LATEST_OUTPUT, "w") as f:
