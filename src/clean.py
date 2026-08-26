@@ -70,7 +70,7 @@ for job in jobs:
         "title": job["name"],
         "site": job["site"],
         "employment": job["employment"] if job.get("employment") else "Not Specified",
-        "department": job["deparment"] if job.get("department") else "Not Specified",
+        "department": job["department"] if job.get("department") else "Not Specified",
         "ref_number": job["refNumber"] if job.get("refNumber") else "Not Specified"
     })
 
