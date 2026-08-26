@@ -51,20 +51,27 @@ def is_gta_hospital(job):
     return not any(city in site for city in excluded_sites)
 
 # --- Clean and filter --- 
-cleaned = []
+cleand = []
+
 for job in jobs:
+    # Basic data quality checks
+    if not job.get("name"):
+        continue
+    if not job.get("site"):
+        continue
+
     if not is_nursing_role(job):
-        continue 
+        continue
     if not is_gta_hospital(job):
         continue
 
     cleaned.append({
-        'id': job['id'],
-        'title': job['name'],
-        'site': job['site'],
-        'employment': job['employment'],
-        'department': job['department'] if job['department'] else 'Not Specified',
-        'ref_number': job['refNumber']
+        "id": job["id"],
+        "title": job["name"],
+        "site": job["site"],
+        "employment": job["employment"],
+        "department": job["department"] if job["department"] else "Not Specified",
+        "ref_number": job["refNumber"]
     })
 
 print(f"Cleaned jobs: {len(cleaned)}")
