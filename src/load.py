@@ -1,3 +1,4 @@
+import os
 import json 
 import psycopg2
 
@@ -17,19 +18,24 @@ Why this matters:
 """
 
 
-
 # Connect to psql
+
 conn = psycopg2.connect(
-    dbname = "nurse_job_postings",
-    user = "kevindai"
+    dbname = os.getenv("CC_DB_NAME", "nurse_job_postings"),
+    user = os.getenv("CC_DB_NAME", "kevindai"),
+    passowrd = os.getenv("CC_DB_PASSWORD"),
+    host = os.getenv("CC_DB_HOST", "localhost"), 
+    port = os.getenv("CC_DB_HOST", "5432")
 )
 cursor = conn.cursor()
 
 # Load cleaned data
+
 jobs = json.load(open('data/cleaned/uhn_jobs.json'))
 print(f"Jobs to load: {len(jobs)}")
 
 # Insert each job
+
 for job in jobs:
     cursor.execute("""
         INSERT INTO job_postings (id, title, site, employment, department, ref_number)
