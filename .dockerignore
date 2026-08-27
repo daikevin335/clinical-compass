@@ -1,0 +1,10 @@
+*.pyc
+*.pyo
+*.pyd
+.env
+.vscode/
+.data/
+data/
+.git
+.gitignore
+
