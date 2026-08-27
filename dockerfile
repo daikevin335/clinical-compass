@@ -1,3 +1,13 @@
+# Clinical Compass ETL image
+# This Dockerfile builds a Python environment for the project.
+# It installs the Python dependencies, copies the code into the container,
+# and runs the ETL scripts in sequence when the container starts.
+#
+# Why this exists:
+# - keeps the app environment consistent
+# - avoids local machine setup issues
+# - makes the pipeline easier to run anywhere
+
 # Lightweight Python App image for Clinical Compass ETL
 
 FROM python:3.11-slim

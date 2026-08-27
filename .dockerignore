@@ -1,3 +1,7 @@
+# Ignore local build artifacts and temporary files
+# These are not needed inside the Docker image.
+# Keeps the image smaller and avoids copying unnecessary local files.
+
 *.pyc
 *.pyo
 *.pyd

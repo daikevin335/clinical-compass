@@ -1,3 +1,16 @@
+# Docker Compose for Clinical Compass
+#
+# This file defines the services needed to run the project locally:
+# - db: PostgreSQL database
+# - app: Python ETL container that extracts, cleans, and loads data
+#
+# The app waits for Postgres to start, then runs:
+#   python3 src/extract.py
+#   python3 src/clean.py
+#   python3 src/load.py
+#
+# The DB data is stored in a Docker volume so it persists across restarts.
+
 version: '3.8'
 
 services:
