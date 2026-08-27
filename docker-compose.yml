@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db: 
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: nurse_job_postings
+      POSTGRES_USER: kevindai
+      POSTGRES_PASSWORD: examplepassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build: . 
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    environment: 
+      CC_DB_NAME: nurse_job_postings
+      CC_DB_USER: kevindai
+      CC_DB_PASSWORD: examplepassword
+      CC_DB_HOST: db
+      CC_DB_PORT: "5432"
+    command: bash -c "python3 src/wait_for_db.py && python3 src/extract.py && python3 src/clean.py && python3 src/load.py"
+
+volumes: 
+  postgres_data:
+    driver: local 
