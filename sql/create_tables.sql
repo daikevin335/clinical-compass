@@ -4,12 +4,13 @@
 
 CREATE TABLE IF NOT EXISTS job_postings (
     id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
+    TITLE TEXT NOT NULL,
     site TEXT NOT NULL,
-    employment TEXT NOT NULL,
+    employment TEXT NOT NULL, 
     department TEXT NOT NULL,
     ref_number TEXT NOT NULL
-);
+); 
+
 
 CREATE TABLE IF NOT EXISTS pipeline_runs (
     run_id TEXT PRIMARY KEY,
