@@ -15,17 +15,20 @@ Basically:
 Why this matters:
 - keeps data in a queryable database
 - prevents duplicate records on repeated runs
+
+NOTES:
+- os.getenv(...) means "read from enivornment variables if available"   
 """
 
 
 # Connect to psql
-
+ 
 conn = psycopg2.connect(
     dbname = os.getenv("CC_DB_NAME", "nurse_job_postings"),
-    user = os.getenv("CC_DB_NAME", "kevindai"),
-    passowrd = os.getenv("CC_DB_PASSWORD"),
+    user = os.getenv("CC_DB_USER", "kevindai"),
+    password = os.getenv("CC_DB_PASSWORD"),
     host = os.getenv("CC_DB_HOST", "localhost"), 
-    port = os.getenv("CC_DB_HOST", "5432")
+    port = os.getenv("CC_DB_PORT", "5432")
 )
 cursor = conn.cursor()
 
