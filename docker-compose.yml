@@ -11,8 +11,6 @@
 #
 # The DB data is stored in a Docker volume so it persists across restarts.
 
-version: '3.8'
-
 services:
   db: 
     image: postgres:15
@@ -22,7 +20,8 @@ services:
       POSTGRES_USER: kevindai
       POSTGRES_PASSWORD: examplepassword
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    - postgres_data:/var/lib/postgresql/data
+    - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/01_create_tables.sql:ro
     ports:
       - "5432:5432"
 

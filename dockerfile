@@ -17,9 +17,9 @@ FROM python:3.11-slim
 ENV PYTHONDONWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /App
+WORKDIR /app
 
-# system dpes for psycopg2
+# System dpes for psycopg2
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc libpq-dev \ 
@@ -28,7 +28,7 @@ RUN apt-get update \
 # Copy and install Python deps
 
 COPY requirements.txt ./
-RUN pip install --no-chache-dor -r requirements.txt 
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Copy project code 
 
