@@ -1,0 +1,24 @@
+[2026-09-01T06:11:59.130+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-09-01T06:11:59.139+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: nursing_pipeline.extract manual__2026-09-01T06:11:57+00:00 [queued]>
+[2026-09-01T06:11:59.141+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: nursing_pipeline.extract manual__2026-09-01T06:11:57+00:00 [queued]>
+[2026-09-01T06:11:59.141+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2026-09-01T06:11:59.145+0000] {taskinstance.py:2330} INFO - Executing <Task(BashOperator): extract> on 2026-09-01 06:11:57+00:00
+[2026-09-01T06:11:59.146+0000] {standard_task_runner.py:64} INFO - Started process 204 to run task
+[2026-09-01T06:11:59.148+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'nursing_pipeline', 'extract', 'manual__2026-09-01T06:11:57+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/nursing_pipeline.py', '--cfg-path', '/tmp/tmp1nzwrz_u']
+[2026-09-01T06:11:59.149+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask extract
+[2026-09-01T06:11:59.165+0000] {task_command.py:426} INFO - Running <TaskInstance: nursing_pipeline.extract manual__2026-09-01T06:11:57+00:00 [running]> on host dd49f84442b1
+[2026-09-01T06:11:59.190+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='nursing_pipeline' AIRFLOW_CTX_TASK_ID='extract' AIRFLOW_CTX_EXECUTION_DATE='2026-09-01T06:11:57+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-09-01T06:11:57+00:00'
+[2026-09-01T06:11:59.190+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-09-01T06:11:59.196+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2026-09-01T06:11:59.196+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'python src/extract.py']
+[2026-09-01T06:11:59.199+0000] {subprocess.py:86} INFO - Output:
+[2026-09-01T06:11:59.525+0000] {subprocess.py:93} INFO - Fetching UHN job postings from https://forms.uhn.ca/UHNCareers/Home/GetAll?tcnt=201...
+[2026-09-01T06:11:59.525+0000] {subprocess.py:93} INFO - Jobs found: 190
+[2026-09-01T06:11:59.525+0000] {subprocess.py:93} INFO - Saved latest raw data to data/raw/uhn_jobs.json
+[2026-09-01T06:11:59.525+0000] {subprocess.py:93} INFO - Saved snapshot raw data to data/raw/uhn_jobs_20260901T061159Z.json
+[2026-09-01T06:11:59.536+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2026-09-01T06:11:59.536+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-09-01T06:11:59.544+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=nursing_pipeline, task_id=extract, run_id=manual__2026-09-01T06:11:57+00:00, execution_date=20260901T061157, start_date=20260901T061159, end_date=20260901T061159
+[2026-09-01T06:11:59.567+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-09-01T06:11:59.576+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-09-01T06:11:59.577+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
