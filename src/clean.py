@@ -29,7 +29,11 @@ nurse_keywords = ['nurse',
                   'nursing', 
                   'rpn', 
                   'clincial coordinator',
-                  'patient care']
+                  'patient care',
+                  'clinical extern',
+                  'student nurse',
+                  'nurse extern',
+                  'nurse practitioner']
 
 def is_nursing_role(job):
     title = job['name'].lower()

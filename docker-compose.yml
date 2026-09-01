@@ -43,9 +43,9 @@ services:
       CC_DB_USER: ${CC_DB_USER}
       CC_DB_PASSWORD: ${CC_DB_PASSWORD}
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./requirements.txt:/opt/clinical-compass/requirements.txt
-      - airflow_logs:/opt/airflow/logs
+    - ./dags://opt/airflow/dags
+    - .:/opt/clinical-compass
+    - airflow_logs:/opt/airflow/logs
     ports:
       - "8080:8080"
     command: bash -c "pip install --no-cache-dir -r /opt/clinical-compass/requirements.txt && airflow standalone"
