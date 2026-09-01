@@ -25,6 +25,32 @@ services:
     ports:
       - "5432:5432"
 
+
+airflow:
+  image: apache/airflow:2.9.3-python3.11
+  restart: always
+  depends_on:
+  - db
+  environment:
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE_EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${CC_DB_USER}:${CC_DB_PASSWORD}@db:5432/${CC_DB_NAME}
+    _AIRFLOW_WWW_USER_USERNAME: admin
+    _AIRFLOW_WW_USER_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD}
+    CC_DB_HOST: db 
+    CC_DB_PORT: "5432"
+    CC_DB_NAME: ${CC_DB_NAME}
+    CC_DB_USER: ${CC_DB_USER}
+    CC_DB_PASSWORD: ${CC_USER_PASSWORD}
+  volumes:
+  - ./dags:/opt/airflow/dags
+  - ./requirements.txt:/opt/clinical-compass/requirements.txt
+  - airflow_logs:/opt/airflow/logs
+  ports:
+  - "8080:8080"
+  command: bash -c "pip install --no-cache-dir -r /opt/clinical-compass/requirements.txt && airflow standalone"
+
+
   app:
     build: . 
     depends_on:
@@ -41,4 +67,6 @@ services:
 
 volumes: 
   postgres_data:
-    driver: local 
+    driver: local
+  airflow_logs:
+    driver: local
