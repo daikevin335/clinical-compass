@@ -11,29 +11,61 @@ I built Clinical Compass to close that gap — a pipeline that automatically pul
 ## What It Does
 
 - Discovers nursing-related job postings from UHN (University Health Network) via their careers API
-- Filters 200+ total postings down to relevant GTA nursing roles using keyword and location logic
+- Filters 190+ total postings down to relevant GTA nursing roles using keyword and location logic
 - Loads cleaned postings into PostgreSQL with duplicate detection — new jobs get added, existing ones get skipped
+- Saves timestamped raw snapshots on every run for traceability and debugging
 - Runs automatically every Monday at 9am via Apache Airflow
+- Fully containerized with Docker — one command starts everything
 
 ## Pipeline Architecture
 
 ```text
 UHN Careers API
       ↓
-src/extract.py     # Pull all 200+ postings
+src/extract.py        # Pull all 190+ postings + save timestamped snapshot
       ↓
-data/raw/          # Raw JSON saved locally
+data/raw/             # Raw JSON saved locally (latest + timestamped)
       ↓
-src/clean.py       # Filter nursing GTA roles, handle nulls
+src/clean.py          # Filter nursing GTA roles, handle nulls
       ↓
-data/cleaned/      # Cleaned JSON
+data/cleaned/         # Cleaned JSON
       ↓
-src/load.py        # Load into PostgreSQL (ON CONFLICT DO NOTHING)
+src/load.py           # Load into PostgreSQL (ON CONFLICT DO NOTHING)
       ↓
 nurse_job_postings database
 ```
 
-Orchestrated by Apache Airflow — runs on a weekly schedule with full task-level monitoring and logging.
+Orchestrated by Apache Airflow running in Docker — weekly schedule with full task-level monitoring, logging, and run history.
+
+## Stack
+
+- **Python** — extraction, cleaning, loading, and filtering (`requests`, `psycopg2`)
+- **PostgreSQL** — structured storage for both job postings and Airflow metadata
+- **Apache Airflow** — weekly pipeline orchestration and monitoring
+- **Docker & Docker Compose** — fully containerized, reproducible deployment
+- **UHN Careers API** — source of hospital job posting data
+
+## Project Structure
+
+    clinical-compass/
+    ├── dags/
+    │   └── nursing_pipeline.py    # Airflow DAG — extract → clean → load
+    ├── data/
+    │   ├── raw/                   # Raw API responses + timestamped snapshots
+    │   └── cleaned/               # Filtered and cleaned postings
+    ├── docs/
+    │   └── logs/                  # Saved Airflow task logs from pipeline runs
+    ├── sql/
+    │   └── create_tables.sql      # Database schema
+    ├── src/
+    │   ├── extract.py             # Pull postings from UHN API
+    │   ├── clean.py               # Filter nursing GTA roles
+    │   ├── load.py                # Load into PostgreSQL
+    │   ├── filter.py              # Interactive job filter script
+    │   └── wait_for_db.py         # Waits for Postgres to be ready before connecting
+    ├── docker-compose.yml         # Defines db, app, and airflow-webserver services
+    ├── Dockerfile                 # App container image
+    └── requirements.txt
 
 ## Data Schema
 
@@ -45,33 +77,11 @@ Orchestrated by Apache Airflow — runs on a weekly schedule with full task-leve
     ├── department    TEXT
     └── ref_number    TEXT
 
-## Stack
-
-- **Python** — extraction, cleaning, and loading (`requests`, `psycopg2`)
-- **PostgreSQL** — structured storage for cleaned job postings
-- **Apache Airflow** — weekly pipeline orchestration and monitoring
-- **UHN Careers API** — source of hospital job posting data
-
-## Project Structure
-
-    clinical-compass/
-    ├── data/
-    │   ├── raw/               # Raw API responses
-    │   └── cleaned/           # Filtered and cleaned postings
-    ├── src/
-    │   ├── extract.py         # Pull postings from UHN API
-    │   ├── clean.py           # Filter nursing GTA roles
-    │   └── load.py            # Load into PostgreSQL
-    └── requirements.txt
-
-The Airflow DAG lives at `~/airflow/dags/nursing_pipeline.py` and runs the three scripts in sequence every Monday.
-
 ## How to Run It
 
 ### Prerequisites
-- Python 3.x
-- PostgreSQL (via Postgres.app on Mac)
-- Apache Airflow
+- Docker and Docker Compose
+- Git
 
 ### Setup
 
@@ -81,44 +91,61 @@ git clone https://github.com/daikevin335/clinical-compass.git
 cd clinical-compass
 ```
 
-2. Install dependencies
+2. Create a `.env` file with your credentials
+
+CC_DB_NAME=nurse_job_postings
+CC_DB_USER=youruser
+CC_DB_PASSWORD=yourpassword
+AIRFLOW_ADMIN_PASSWORD=yourairflowpassword
+
+
+3. Start all services
 ```bash
-pip3 install -r requirements.txt
+docker compose up -d --build
 ```
 
-3. Create the database in psql
-```sql
-CREATE DATABASE nurse_job_postings;
-\c nurse_job_postings
-CREATE TABLE job_postings (
-    id TEXT PRIMARY KEY,
-    title TEXT,
-    site TEXT,
-    employment TEXT,
-    department TEXT,
-    ref_number TEXT
-);
-```
+This starts three containers:
+- `db` — PostgreSQL database
+- `app` — runs the ETL pipeline once on startup
+- `airflow-webserver` — Airflow UI and scheduler
 
-4. Run the pipeline manually
+4. Access the Airflow UI
+
+http://localhost:8080
+Username: admin
+Password: (whatever you set as AIRFLOW_ADMIN_PASSWORD in .env)
+
+
+
+5. Trigger the pipeline manually or let it run on its Monday schedule
+
+### Useful Docker commands
+
 ```bash
-python3 src/extract.py
-python3 src/clean.py
-python3 src/load.py
+# Check running containers
+docker ps
+
+# View logs for a specific container
+docker logs -f clinical-compass-airflow-webserver-1
+
+# Trigger DAG manually
+docker exec clinical-compass-airflow-webserver-1 airflow dags trigger nursing_pipeline
+
+# Check database
+docker exec clinical-compass-db-1 psql -U youruser -d nurse_job_postings -c "SELECT COUNT(*) FROM job_postings;"
 ```
 
-5. Set up Airflow automation
+### Filter jobs interactively
+
 ```bash
-export AIRFLOW_HOME=~/airflow
-airflow db migrate
-airflow standalone
+python3 src/filter.py
 ```
 
-Then copy `nursing_pipeline.py` to `~/airflow/dags/` and the pipeline will run every Monday at 9am.
+Filter by site, department, and employment type to find relevant postings.
 
 ## Limitations & Next Steps
 
 - **Single source:** currently only pulls from UHN — expanding to Sunnybrook, SickKids, and Trillium is planned
 - **Keyword filtering:** nursing role detection uses keyword matching which may miss some roles or include edge cases
-- **User-facing filter layer:** a query interface letting users filter by employment type, department, or site is planned
-- **Airflow on Mac only:** the current setup assumes Postgres.app and local Airflow — a future iteration would containerize with Docker for portability
+- **Web interface:** a browser-based filter UI is planned so anyone can search postings without running scripts
+- **Additional hospitals:** Sunnybrook and SickKids block automated requests — alternative data sources are being explored
