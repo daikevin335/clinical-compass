@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_DB: nurse_job_postings
       POSTGRES_USER: kevindai
-      POSTGRES_PASSWORD: examplepassword
+      POSTGRES_PASSWORD: ${CC_DB_PASSWORD}
     volumes:
     - postgres_data:/var/lib/postgresql/data
     - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/01_create_tables.sql:ro
@@ -60,7 +60,7 @@ services:
     environment: 
       CC_DB_NAME: nurse_job_postings
       CC_DB_USER: kevindai
-      CC_DB_PASSWORD: examplepassword
+      CC_DB_PASSWORD: ${CC_DB_PASSWORD}
       CC_DB_HOST: db
       CC_DB_PORT: "5432"
     command: bash -c "python3 src/wait_for_db.py && python3 src/extract.py && python3 src/clean.py && python3 src/load.py"

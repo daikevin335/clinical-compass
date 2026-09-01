@@ -1,4 +1,5 @@
 import psycopg2
+import os
 
 """"
 Connects Python to PSQL database & allows to filter nurse job postings
@@ -29,8 +30,11 @@ so; not directly putting user input inot the SQL string
 # Connect to PSQL
 
 conn = psycopg2.connect(
-    dbname = "nurse_job_postings", 
-    user = "kevindai"
+    dbname = os.getenv("CC_DB_NAME", "nurse_job_postings"),
+    user = os.getenv("CC_DB_USER", "kevindai"),
+    password = os.getenv("CC_DB_PASSWORD"),
+    host = os.getenv("CC_DB_HOST", "localhost"), 
+    port = os.getenv("CC_DB_HOST", "5432")
 )
 cursor = conn.cursor()
 

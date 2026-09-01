@@ -28,7 +28,7 @@ print(f"Raw jobs: {len(jobs)}")
 nurse_keywords = ['nurse', 
                   'nursing', 
                   'rpn', 
-                  'clincial coordinator',
+                  'clinical coordinator',
                   'patient care',
                   'clinical extern',
                   'student nurse',
