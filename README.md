@@ -1,5 +1,7 @@
 # Clinical Compass 🏥
 
+**Live:** https://clinical-compass.onrender.com
+
 An automated data pipeline that extracts, cleans, and loads GTA hospital nursing job postings into a structured PostgreSQL database — refreshed every week without lifting a finger.
 
 ## Why I Built This
