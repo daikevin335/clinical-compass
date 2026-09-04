@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Compass 🏥</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 180px;
+        }
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 9px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            height: 36px;
+        }
+        button:hover {
+            background: #1557b0;
+        }
+        .results-header {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .job-card {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .job-info h3 {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            color: #1a1a1a;
+        }
+        .job-meta {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            gap: 15px;
+        }
+        .apply-btn {
+            background: #1a73e8;
+            color: white;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .apply-btn:hover {
+            background: #1557b0;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 10px;
+        }
+        .tag {
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Clinical Compass 🏥</h1>
+    <p class="subtitle">GTA hospital nursing jobs — updated every Monday</p>
+
+    <form class="filters" method="GET">
+        <div class="filter-group">
+            <label>Hospital Site</label>
+            <select name="site">
+                <option value="">All Sites</option>
+                {% for site in sites %}
+                <option value="{{ site }}" {% if site == selected_site %}selected{% endif %}>
+                    {{ site }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Department</label>
+            <select name="department">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                <option value="{{ dept }}" {% if dept == selected_dept %}selected{% endif %}>
+                    {{ dept }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Employment Type</label>
+            <select name="employment">
+                <option value="">All Types</option>
+                {% for emp in employment_types %}
+                <option value="{{ emp }}" {% if emp == selected_emp %}selected{% endif %}>
+                    {{ emp }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Find Jobs</button>
+    </form>
+
+    <div class="results-header">
+        {{ jobs|length }} job{{ 's' if jobs|length != 1 else '' }} found
+    </div>
+
+    {% if jobs %}
+        {% for id, title, site, department, employment in jobs %}
+        <div class="job-card">
+            <div class="job-info">
+                <h3>{{ title }}</h3>
+                <div class="job-meta">
+                    <span>📍 {{ site }}</span>
+                    <span>🏥 {{ department }}</span>
+                    <span class="tag">{{ employment }}</span>
+                </div>
+            </div>
+            <a class="apply-btn" 
+               href="https://jobs.smartrecruiters.com/UniversityHealthNetwork/{{ id }}" 
+               target="_blank">
+                Apply →
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-results">
+            <p>No jobs found matching your filters. Try adjusting your search.</p>
+        </div>
+    {% endif %}
+</body>
+</html>
